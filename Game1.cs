@@ -10,6 +10,7 @@ namespace Snake
         private SpriteBatch _spriteBatch;
 
         private Grid _grid;
+        private Texture2D emptySpaceTexture;
 
         public Game1()
         {
@@ -20,7 +21,7 @@ namespace Snake
 
         protected override void Initialize()
         {
-            _grid = new Grid(15, 15, 25);
+            _grid = new Grid(15, 15, 25); // Create a new grid
 
             base.Initialize();
         }
@@ -29,9 +30,12 @@ namespace Snake
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            emptySpaceTexture = Content.Load<Texture2D>("spaceTest");
+
+            // Assign the appropriate texture to each space, for now all are empty
             foreach (GridSpace space in _grid)
             {
-                space.Texture = Content.Load<Texture2D>("spaceTest");
+                space.Texture = emptySpaceTexture;
             }
         }
 
@@ -49,8 +53,9 @@ namespace Snake
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            _spriteBatch.Begin(samplerState: SamplerState.PointWrap);
+            _spriteBatch.Begin(samplerState: SamplerState.PointWrap); // TODO: Fix sprite wrapping
 
+            // Draw each space in the grid, using its own texture
             foreach (GridSpace space in _grid)
             {
                 _spriteBatch.Draw(space.Texture, space.Dimensions, Color.White);
