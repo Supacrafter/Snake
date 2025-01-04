@@ -58,7 +58,7 @@ namespace Snake
         public void SetDirection(Vector2 newDirection)
         {
             // TODO: Fix direction setting. Can set diagonals
-            if (newDirection.X != 1 ^ newDirection.Y != 1 || newDirection.X != -1 ^ newDirection.Y != -1)
+            if (newDirection.X != 1 ^ newDirection.Y != 1 && newDirection.X != -1 ^ newDirection.Y != -1)
             {
                 throw new ArgumentOutOfRangeException(nameof(newDirection), "The specified direction is not valid: Supplied direction is not (+/- 1, 0) or (0, +/- 1)");
             }

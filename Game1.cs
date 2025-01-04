@@ -30,7 +30,7 @@ namespace Snake
         protected override void Initialize()
         {
             _grid = new Grid(15, 15, 25); // Create a new grid
-            _snake = new Snake(new Vector2(9, 5), new Vector2(1, 2), 5); // create a new snake
+            _snake = new Snake(new Vector2(9, 5), new Vector2(1, 0), 5); // create a new snake
 
             base.Initialize();
         }
