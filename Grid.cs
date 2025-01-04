@@ -17,11 +17,12 @@ namespace Snake
 
         public int Rows { get { return spaces.GetLength(0); } }
         public int Columns { get { return spaces.GetLength(1); } }
+        public int Size { get { return spaces.Length; } }
 
         public GridSpace this[int i, int k] { get { return spaces[i, k]; } set { spaces[i, k] = value; } } // indexer property
 
         /// <summary>
-        /// Creates a new Grid
+        /// Creates a singleton instance of a grid
         /// </summary>
         /// <param name="rows">The number of rows this grid should have</param>
         /// <param name="columns">The number of columns this grid should have</param>
