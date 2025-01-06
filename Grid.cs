@@ -45,6 +45,11 @@ namespace Snake
             }
         }
 
+        public void UpdateGrid()
+        {
+
+        }
+
         public IEnumerator<GridSpace> GetEnumerator()
         {
             foreach (GridSpace space in spaces)
