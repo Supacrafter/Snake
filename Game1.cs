@@ -20,7 +20,8 @@ namespace Snake
         private Texture2D emptySpaceTexture;
         private Texture2D snakeBodyTexture;
 
-        private bool spacebarDownPrevFrame;
+        private double timeOfLastMove = 1; // represents the time when the snake most recently moved
+        private double moveDelay = .5; // the delay in seconds the snake should move
 
         public Game1()
         {
@@ -34,8 +35,6 @@ namespace Snake
             _grid = new Grid(15, 15, 25); // Create a new grid
             _snake = new Snake(new Vector2(9, 5), SnakeDirection.Right, 5); // create a new snake
 
-            spacebarDownPrevFrame = false;
-            
             base.Initialize();
         }
 
@@ -73,16 +72,7 @@ namespace Snake
                 _snake.SetDirection(SnakeDirection.Right);
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Space) && !spacebarDownPrevFrame)
-            {
-                spacebarDownPrevFrame = true;
-            }
-            
-            if (!Keyboard.GetState().IsKeyDown(Keys.Space) && spacebarDownPrevFrame)
-            {
-                _snake.Move();
-                spacebarDownPrevFrame = false;
-            }
+            // move the snake
 
             UpdateGrid();
 
