@@ -119,12 +119,12 @@ namespace Snake
         /// </summary>
         public void Move()
         {
-            snakeBody[0] += direction;
-
-            for (int i = 1; i < snakeBody.Count; i++)
+            for (int i = snakeBody.Count-1; i >= 1; i--)
             {
                 snakeBody[i] = snakeBody[i - 1];
             }
+
+            snakeBody[0] += direction;
         }
     }
 }
