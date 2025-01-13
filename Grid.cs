@@ -14,7 +14,6 @@ namespace Snake
     internal class Grid : IEnumerable<GridSpace>
     {
         private GridSpace[,] spaces; // All of the spaces within this grid
-
         public int Rows { get { return spaces.GetLength(0); } }
         public int Columns { get { return spaces.GetLength(1); } }
         public int Size { get { return spaces.Length; } }
@@ -43,11 +42,6 @@ namespace Snake
                 }
                 xCoord += spaceSize; // increment the xCoord by the appropriate amt
             }
-        }
-
-        public void UpdateGrid()
-        {
-
         }
 
         public IEnumerator<GridSpace> GetEnumerator()

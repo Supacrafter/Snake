@@ -37,7 +37,7 @@ namespace Snake
         /// <param name="size">The number of segments the snake should start with</param>
         public Snake(Vector2 initPosition, SnakeDirection initDirection, int size)
         {
-            SetDirection(initDirection);
+            direction = DirectionToVector(initDirection);
 
             snakeBody = new List<Vector2>(0);
 
@@ -109,9 +109,9 @@ namespace Snake
         public void AddSegment()
         {
             Vector2 segementPosition = snakeBody[snakeBody.Count-1];
-            Vector2 offest = Vector2.One * direction;
+            Vector2 offset = Vector2.One * direction;
 
-            snakeBody.Add(segementPosition - offest);
+            snakeBody.Add(segementPosition - offset);
         }
 
         /// <summary>

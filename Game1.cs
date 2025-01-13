@@ -20,6 +20,8 @@ namespace Snake
         private Texture2D emptySpaceTexture;
         private Texture2D snakeBodyTexture;
 
+        private bool spacebarDownPrevFrame;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -32,6 +34,8 @@ namespace Snake
             _grid = new Grid(15, 15, 25); // Create a new grid
             _snake = new Snake(new Vector2(9, 5), SnakeDirection.Right, 5); // create a new snake
 
+            spacebarDownPrevFrame = false;
+            
             base.Initialize();
         }
 
@@ -69,9 +73,15 @@ namespace Snake
                 _snake.SetDirection(SnakeDirection.Right);
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Space))
+            if (Keyboard.GetState().IsKeyDown(Keys.Space) && !spacebarDownPrevFrame)
+            {
+                spacebarDownPrevFrame = true;
+            }
+            
+            if (!Keyboard.GetState().IsKeyDown(Keys.Space) && spacebarDownPrevFrame)
             {
                 _snake.Move();
+                spacebarDownPrevFrame = false;
             }
 
             UpdateGrid();
@@ -100,32 +110,15 @@ namespace Snake
 
         private void UpdateGrid()
         {
-            /*
-             * This is a part of the code that is prime for optimization
-             */
-            for (int i = _grid.Rows - 1; i >= 0; i--)
+            // Flush the grid
+            foreach (GridSpace space in _grid)
             {
-                for (int k = 0; k < _grid.Columns; k++)
-                {
-                    GridSpace space = _grid[i, k];
-                    foreach (Vector2 segment in _snake.SnakeBody)
-                    {
-                        // If the space we are checking is not null or an empty space, skip it
-                        if (!(space.Texture == null || space.Texture == emptySpaceTexture))
-                        {
-                            continue;
-                        }
+                space.Texture = emptySpaceTexture;
+            }
 
-                        if (space.Position.Equals(segment * 25))
-                        {
-                            space.Texture = snakeBodyTexture;
-                        }
-                        else
-                        {
-                            space.Texture = emptySpaceTexture;
-                        }
-                    }
-                }
+            foreach (Vector2 segment in _snake.SnakeBody)
+            {
+                _grid[(int)segment.X, (int)segment.Y].Texture = snakeBodyTexture;
             }
         }
     }
