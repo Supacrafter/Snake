@@ -27,8 +27,6 @@ namespace Snake
         public List<Vector2> SnakeBody { get { return snakeBody; } }
         public Vector2 Direction { get { return direction; } }
 
-        public static Snake instance; // sing
-
         /// <summary>
         /// Creates a snake with an inital positon, direction, and size
         /// </summary>
@@ -125,6 +123,23 @@ namespace Snake
             }
 
             snakeBody[0] += direction;
+        }
+
+        public bool IsDead()
+        {
+            if (snakeBody[0].X > Grid.Instance.Columns && snakeBody[0].X < 0 || snakeBody[0].Y > Grid.Instance.Columns && snakeBody[0].X < 0)
+            {
+                return true;
+            }
+            for (int i = 1; i < snakeBody.Count; i++)
+            {
+                if (snakeBody[i].Equals(snakeBody[0]))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

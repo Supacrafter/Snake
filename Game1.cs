@@ -20,8 +20,9 @@ namespace Snake
         private Texture2D emptySpaceTexture;
         private Texture2D snakeBodyTexture;
 
-        private double timeOfLastMove = 1; // represents the time when the snake most recently moved
-        private double moveDelay = .5; // the delay in seconds the snake should move
+        private double timeSinceLastMove; // the time since the snake has moved last in seconds
+        private const double secondsPerMove = .25; // the number of seconds that should pass before the snake moves again
+
 
         public Game1()
         {
@@ -72,7 +73,25 @@ namespace Snake
                 _snake.SetDirection(SnakeDirection.Right);
             }
 
-            // move the snake
+            // Snake dies when it collides with itself, but does not when it leaves bounds of the grid
+            if (!_snake.IsDead())
+            {
+                if (timeSinceLastMove > gameTime.ElapsedGameTime.TotalSeconds + secondsPerMove)
+                {
+                    timeSinceLastMove = gameTime.ElapsedGameTime.TotalSeconds;
+                    _snake.Move();
+                }
+                else
+                {
+                    timeSinceLastMove += gameTime.ElapsedGameTime.TotalSeconds;
+                }
+            }
+            else
+            {
+                // the snake is dead, later display text. For now, close the game
+                Exit();
+            }
+            
 
             UpdateGrid();
 

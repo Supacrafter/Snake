@@ -17,6 +17,7 @@ namespace Snake
         public int Rows { get { return spaces.GetLength(0); } }
         public int Columns { get { return spaces.GetLength(1); } }
         public int Size { get { return spaces.Length; } }
+        public static Grid Instance { get; private set; }
 
         public GridSpace this[int i, int k] { get { return spaces[i, k]; } set { spaces[i, k] = value; } } // indexer property
 
@@ -28,6 +29,15 @@ namespace Snake
         /// <param name="spaceSize">The size of each space, in pixels</param>
         public Grid(int rows, int columns, int spaceSize)
         {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else
+            {
+                return;
+            }
+
             spaces = new GridSpace[rows, columns];
             int xCoord = 0; // current xCoord of the column (in pixels)
 
