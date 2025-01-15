@@ -72,30 +72,27 @@ namespace Snake
             {
                 _snake.SetDirection(SnakeDirection.Right);
             }
-
-            // Snake dies when it collides with itself, but does not when it leaves bounds of the grid
-            if (!_snake.IsDead())
+            
+            // check if the snake hits itself or if it will be out of bounds by the time it moves next
+            if (_snake.IsDead() || _snake.HeadToBeOutOfBounds())
             {
-                if (timeSinceLastMove > gameTime.ElapsedGameTime.TotalSeconds + secondsPerMove)
-                {
-                    timeSinceLastMove = gameTime.ElapsedGameTime.TotalSeconds;
-                    _snake.Move();
-                }
-                else
-                {
-                    timeSinceLastMove += gameTime.ElapsedGameTime.TotalSeconds;
-                }
-            }
-            else
-            {
-                // the snake is dead, later display text. For now, close the game
+                // replace this with new 'Game over' code later
                 Exit();
             }
             
+            if (timeSinceLastMove > gameTime.ElapsedGameTime.TotalSeconds + secondsPerMove)
+            {
+                timeSinceLastMove = gameTime.ElapsedGameTime.TotalSeconds;
+                _snake.Move();
+            }
+            else
+            {
+                timeSinceLastMove += gameTime.ElapsedGameTime.TotalSeconds;
+            }
+
+            // if snake hits food item, add a segment to it
 
             UpdateGrid();
-
-            // if snake head touches any part of its body, game over
 
             base.Update(gameTime);
         }

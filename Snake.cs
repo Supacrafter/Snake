@@ -26,6 +26,8 @@ namespace Snake
         public Vector2 HeadPosition { get { return snakeBody[0]; } } // head of the snake, all other segments follow this
         public List<Vector2> SnakeBody { get { return snakeBody; } }
         public Vector2 Direction { get { return direction; } }
+        public static Snake Instance { get; private set; }
+
 
         /// <summary>
         /// Creates a snake with an inital positon, direction, and size
@@ -35,6 +37,16 @@ namespace Snake
         /// <param name="size">The number of segments the snake should start with</param>
         public Snake(Vector2 initPosition, SnakeDirection initDirection, int size)
         {
+            // singleton
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else
+            {
+                return;
+            }
+
             direction = DirectionToVector(initDirection);
 
             snakeBody = new List<Vector2>(0);
@@ -55,10 +67,12 @@ namespace Snake
         public void SetDirection(SnakeDirection direction)
         {
             // shouldnt change directions if we are going to instantly flip backwards
-            if (this.direction != DirectionToVector(GetOppositeDirection(direction)))
+            if (this.direction == DirectionToVector(GetOppositeDirection(direction)))
             {
-                this.direction = DirectionToVector(direction); 
+                return;
             }
+
+            this.direction = DirectionToVector(direction);
         }
 
         /// <summary>
@@ -127,10 +141,6 @@ namespace Snake
 
         public bool IsDead()
         {
-            if (snakeBody[0].X > Grid.Instance.Columns && snakeBody[0].X < 0 || snakeBody[0].Y > Grid.Instance.Columns && snakeBody[0].X < 0)
-            {
-                return true;
-            }
             for (int i = 1; i < snakeBody.Count; i++)
             {
                 if (snakeBody[i].Equals(snakeBody[0]))
@@ -140,6 +150,15 @@ namespace Snake
             }
 
             return false;
+        }
+
+        public bool HeadToBeOutOfBounds()
+        {
+            // head offset in direction to move to check before moving
+            int headX = (int)(HeadPosition.X + direction.X);
+            int headY = (int)(HeadPosition.Y + direction.Y);
+
+            return !(headX > -1 && headX <= Grid.Instance.Columns && headY > -1 && headY <= Grid.Instance.Rows); // inverse of if the snake is in bounds
         }
     }
 }

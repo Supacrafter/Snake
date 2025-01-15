@@ -18,7 +18,6 @@ namespace Snake
         public int Columns { get { return spaces.GetLength(1); } }
         public int Size { get { return spaces.Length; } }
         public static Grid Instance { get; private set; }
-
         public GridSpace this[int i, int k] { get { return spaces[i, k]; } set { spaces[i, k] = value; } } // indexer property
 
         /// <summary>
@@ -52,6 +51,14 @@ namespace Snake
                 }
                 xCoord += spaceSize; // increment the xCoord by the appropriate amt
             }
+        }
+
+        /// <summary>
+        /// Adds a food item onto the grid at a random location not occupied by the snake
+        /// </summary>
+        public void AddFood()
+        {
+
         }
 
         public IEnumerator<GridSpace> GetEnumerator()
