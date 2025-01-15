@@ -14,9 +14,11 @@ namespace Snake
     internal class Grid : IEnumerable<GridSpace>
     {
         private GridSpace[,] spaces; // All of the spaces within this grid
+        private Vector2 fruitIndices; // the indices of the space the fruit is on
         public int Rows { get { return spaces.GetLength(0); } }
         public int Columns { get { return spaces.GetLength(1); } }
         public int Size { get { return spaces.Length; } }
+        public GridSpace FruitSpace { get { return spaces[(int)fruitIndices.X, (int)fruitIndices.Y]; } } // the space the fruit is on
         public static Grid Instance { get; private set; }
         public GridSpace this[int i, int k] { get { return spaces[i, k]; } set { spaces[i, k] = value; } } // indexer property
 

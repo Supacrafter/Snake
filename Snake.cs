@@ -139,6 +139,10 @@ namespace Snake
             snakeBody[0] += direction;
         }
 
+        /// <summary>
+        /// Checks if the snake is dead via hitting itself
+        /// </summary>
+        /// <returns>If the snake is dead</returns>
         public bool IsDead()
         {
             for (int i = 1; i < snakeBody.Count; i++)
@@ -152,6 +156,10 @@ namespace Snake
             return false;
         }
 
+        /// <summary>
+        /// Checks if the head is about to be out of bounds upon next Move() call
+        /// </summary>
+        /// <returns>If the head will be out of bounds</returns>
         public bool HeadToBeOutOfBounds()
         {
             // head offset in direction to move to check before moving
