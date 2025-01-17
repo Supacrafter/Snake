@@ -14,14 +14,14 @@ namespace Snake
     internal class Grid : IEnumerable<GridSpace>
     {
         private GridSpace[,] spaces; // All of the spaces within this grid
-        private Vector2 fruitIndices; // the indices of the space the fruit is on
+        private GridSpace fruitSpace; // the space the fruit is on
+        private Random rng; // random number generator for placing fruit
         public int Rows { get { return spaces.GetLength(0); } }
         public int Columns { get { return spaces.GetLength(1); } }
         public int Size { get { return spaces.Length; } }
-        public GridSpace FruitSpace { get { return spaces[(int)fruitIndices.X, (int)fruitIndices.Y]; } } // the space the fruit is on
+        public GridSpace FruitSpace { get { return fruitSpace; } } // the space the fruit is on
         public static Grid Instance { get; private set; }
         public GridSpace this[int i, int k] { get { return spaces[i, k]; } set { spaces[i, k] = value; } } // indexer property
-
         /// <summary>
         /// Creates a singleton instance of a grid
         /// </summary>
@@ -39,6 +39,8 @@ namespace Snake
                 return;
             }
 
+            rng = new Random();
+
             spaces = new GridSpace[rows, columns];
             int xCoord = 0; // current xCoord of the column (in pixels)
 
@@ -48,7 +50,7 @@ namespace Snake
                 for (int k = 0; k < spaces.GetLength(1); k++)
                 {
                     // make a grid space, as a specified position with a certain type of content
-                    spaces[i, k] = new GridSpace(ContentType.Empty, new Rectangle(xCoord, yCoord, spaceSize, spaceSize)); 
+                    spaces[i, k] = new GridSpace(new Rectangle(xCoord, yCoord, spaceSize, spaceSize)); 
                     yCoord += spaceSize; // increment the yCoord by appropriate amt
                 }
                 xCoord += spaceSize; // increment the xCoord by the appropriate amt
@@ -60,7 +62,21 @@ namespace Snake
         /// </summary>
         public void AddFood()
         {
+            List<Vector2> invalidPositions = Snake.Instance.SnakeBody;
 
+            bool done = false;
+
+            // loop until a valid space is selected
+            while (!done)
+            {
+                Vector2 selectedPosition = new Vector2(rng.Next(Columns), rng.Next(Rows));
+
+                if (!invalidPositions.Contains(selectedPosition))
+                {
+                    fruitSpace = spaces[(int)selectedPosition.X, (int)selectedPosition.Y];
+                    done = true;
+                }
+            }
         }
 
         public IEnumerator<GridSpace> GetEnumerator()

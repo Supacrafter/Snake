@@ -19,10 +19,12 @@ namespace Snake
 
         private Texture2D emptySpaceTexture;
         private Texture2D snakeBodyTexture;
+        private Texture2D foodTexture;
 
         private double timeSinceLastMove; // the time since the snake has moved last in seconds
         private const double secondsPerMove = .25; // the number of seconds that should pass before the snake moves again
 
+        SnakeDirection dirToMove;
 
         public Game1()
         {
@@ -33,8 +35,15 @@ namespace Snake
 
         protected override void Initialize()
         {
+            _graphics.PreferredBackBufferHeight = 900;
+            _graphics.PreferredBackBufferWidth = 900;
+
             _grid = new Grid(15, 15, 25); // Create a new grid
             _snake = new Snake(new Vector2(9, 5), SnakeDirection.Right, 5); // create a new snake
+
+            _grid.AddFood();
+
+            dirToMove = _snake.Direction;
 
             base.Initialize();
         }
@@ -45,6 +54,7 @@ namespace Snake
 
             emptySpaceTexture = Content.Load<Texture2D>("spaceTest");
             snakeBodyTexture = Content.Load<Texture2D>("snakeTest");
+            foodTexture = Content.Load<Texture2D>("foodTest");
 
             UpdateGrid();
         }
@@ -56,21 +66,24 @@ namespace Snake
 
             // Set direction based on input
             // There is probably a better way of doing this
+
+            // If player sets direction perpendicular to current, and then to the opposite of the previous direction BEFORE the snake moves
+            // the snake head will retract into the body, ending the game
             if (Keyboard.GetState().IsKeyDown(Keys.Up))
             {
-                _snake.SetDirection(SnakeDirection.Up);
+                dirToMove = SnakeDirection.Up;
             }
             else if (Keyboard.GetState().IsKeyDown(Keys.Down))
             {
-                _snake.SetDirection(SnakeDirection.Down);
+                dirToMove = SnakeDirection.Down;
             }
             else if (Keyboard.GetState().IsKeyDown(Keys.Left))
             {
-                _snake.SetDirection(SnakeDirection.Left);
+                dirToMove = SnakeDirection.Left;
             }
             else if (Keyboard.GetState().IsKeyDown(Keys.Right))
             {
-                _snake.SetDirection(SnakeDirection.Right);
+                dirToMove = SnakeDirection.Right;
             }
             
             // check if the snake hits itself or if it will be out of bounds by the time it moves next
@@ -83,6 +96,7 @@ namespace Snake
             if (timeSinceLastMove > gameTime.ElapsedGameTime.TotalSeconds + secondsPerMove)
             {
                 timeSinceLastMove = gameTime.ElapsedGameTime.TotalSeconds;
+                _snake.SetDirection(dirToMove);
                 _snake.Move();
             }
             else
@@ -91,6 +105,12 @@ namespace Snake
             }
 
             // if snake hits food item, add a segment to it
+            // will need to add a check to make sure the snake does not extend beyond the grid, in which case the game would be 'won'
+            if (_snake.HeadPosition.Equals(_grid.FruitSpace.Position / 25))
+            {
+                _snake.AddSegment();
+                _grid.AddFood();
+            }
 
             UpdateGrid();
 
@@ -122,10 +142,12 @@ namespace Snake
                 space.Texture = emptySpaceTexture;
             }
 
+            _grid.FruitSpace.Texture = foodTexture;
+
             foreach (Vector2 segment in _snake.SnakeBody)
             {
                 _grid[(int)segment.X, (int)segment.Y].Texture = snakeBodyTexture;
-            }
+            }   
         }
     }
 }

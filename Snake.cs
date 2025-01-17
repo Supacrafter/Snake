@@ -21,11 +21,12 @@ namespace Snake
     internal class Snake
     {
         private List<Vector2> snakeBody; // the entire body of the snake, including the head
-        private Vector2 direction; // a vector2 to represent which direction the snake head should move
+        private Vector2 directionVector; // a vector2 to represent which direction the snake head should move
+        private SnakeDirection direction; // enum for Direction;
 
         public Vector2 HeadPosition { get { return snakeBody[0]; } } // head of the snake, all other segments follow this
         public List<Vector2> SnakeBody { get { return snakeBody; } }
-        public Vector2 Direction { get { return direction; } }
+        public SnakeDirection Direction { get { return direction; } }
         public static Snake Instance { get; private set; }
 
 
@@ -47,7 +48,7 @@ namespace Snake
                 return;
             }
 
-            direction = DirectionToVector(initDirection);
+            directionVector = DirectionToVector(initDirection);
 
             snakeBody = new List<Vector2>(0);
 
@@ -55,7 +56,7 @@ namespace Snake
             Vector2 offset = new Vector2(0, 0);
             for (int i = 0; i < size; i++)
             {
-                snakeBody.Add(initPosition - (offset * direction));
+                snakeBody.Add(initPosition - (offset * directionVector));
                 offset += Vector2.One;
             }
         }
@@ -67,12 +68,13 @@ namespace Snake
         public void SetDirection(SnakeDirection direction)
         {
             // shouldnt change directions if we are going to instantly flip backwards
-            if (this.direction == DirectionToVector(GetOppositeDirection(direction)))
+            if (this.directionVector == DirectionToVector(GetOppositeDirection(direction)))
             {
                 return;
             }
 
-            this.direction = DirectionToVector(direction);
+            this.direction = direction;
+            directionVector = DirectionToVector(direction);
         }
 
         /// <summary>
@@ -121,9 +123,9 @@ namespace Snake
         public void AddSegment()
         {
             Vector2 segementPosition = snakeBody[snakeBody.Count-1];
-            Vector2 offset = Vector2.One * direction;
+            Vector2 offset = snakeBody[snakeBody.Count - 1] - segementPosition;
 
-            snakeBody.Add(segementPosition - offset);
+            snakeBody.Add(segementPosition + offset);
         }
 
         /// <summary>
@@ -136,7 +138,7 @@ namespace Snake
                 snakeBody[i] = snakeBody[i - 1];
             }
 
-            snakeBody[0] += direction;
+            snakeBody[0] += directionVector;
         }
 
         /// <summary>
@@ -163,8 +165,8 @@ namespace Snake
         public bool HeadToBeOutOfBounds()
         {
             // head offset in direction to move to check before moving
-            int headX = (int)(HeadPosition.X + direction.X);
-            int headY = (int)(HeadPosition.Y + direction.Y);
+            int headX = (int)(HeadPosition.X + directionVector.X);
+            int headY = (int)(HeadPosition.Y + directionVector.Y);
 
             return !(headX > -1 && headX <= Grid.Instance.Columns && headY > -1 && headY <= Grid.Instance.Rows); // inverse of if the snake is in bounds
         }
