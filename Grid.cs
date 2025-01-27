@@ -22,6 +22,7 @@ namespace Snake
         public GridSpace FruitSpace { get { return fruitSpace; } } // the space the fruit is on
         public static Grid Instance { get; private set; }
         public GridSpace this[int i, int k] { get { return spaces[i, k]; } set { spaces[i, k] = value; } } // indexer property
+
         /// <summary>
         /// Creates a singleton instance of a grid
         /// </summary>

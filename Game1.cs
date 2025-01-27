@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Snake
@@ -17,12 +18,23 @@ namespace Snake
         private Grid _grid;
         private Snake _snake;
 
+        // Textures
         private Texture2D emptySpaceTexture;
         private Texture2D snakeBodyTexture;
         private Texture2D foodTexture;
 
+        // Fonts
+        private SpriteFont font1;
+
+        // Textboxes
+        private List<TextBox> _textBoxes;
+        private TextBox scoreBox;
+        private TextBox gameoverBox;
+
         private double timeSinceLastMove; // the time since the snake has moved last in seconds
         private const double secondsPerMove = .25; // the number of seconds that should pass before the snake moves again
+
+
 
         SnakeDirection dirToMove;
 
@@ -38,12 +50,16 @@ namespace Snake
             _graphics.PreferredBackBufferHeight = 900;
             _graphics.PreferredBackBufferWidth = 900;
 
+            _graphics.ApplyChanges();
+
             _grid = new Grid(15, 15, 25); // Create a new grid
             _snake = new Snake(new Vector2(9, 5), SnakeDirection.Right, 5); // create a new snake
 
             _grid.AddFood();
 
             dirToMove = _snake.Direction;
+
+            _textBoxes = new List<TextBox>();
 
             base.Initialize();
         }
@@ -55,6 +71,14 @@ namespace Snake
             emptySpaceTexture = Content.Load<Texture2D>("spaceTest");
             snakeBodyTexture = Content.Load<Texture2D>("snakeTest");
             foodTexture = Content.Load<Texture2D>("foodTest");
+
+            font1 = Content.Load<SpriteFont>("Arial");
+
+            scoreBox = new TextBox(font1, Vector2.One, new Vector2(800, 100), "Score: ");
+            gameoverBox = new TextBox(font1, Vector2.One, new Vector2(800, 200), "GameOver");
+
+            _textBoxes.Add(scoreBox);
+            _textBoxes.Add(gameoverBox);
 
             UpdateGrid();
         }
@@ -127,6 +151,11 @@ namespace Snake
             foreach (GridSpace space in _grid)
             {
                 _spriteBatch.Draw(space.Texture, space.Dimensions, Color.White);
+            }
+
+            foreach(TextBox box in _textBoxes)
+            {
+
             }
 
             _spriteBatch.End();
