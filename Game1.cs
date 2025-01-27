@@ -15,6 +15,7 @@ namespace Snake
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        // game objects
         private Grid _grid;
         private Snake _snake;
 
@@ -27,13 +28,17 @@ namespace Snake
         private SpriteFont font1;
 
         // Textboxes
-        private List<TextBox> _textBoxes;
-        private TextBox scoreBox;
-        private TextBox gameoverBox;
+        private List<TextElement> _textBoxes;
+        private TextElement scoreBox;
+        private TextElement gameoverBox;
+        private TextElement winBox;
 
+        // movement info
         private double timeSinceLastMove; // the time since the snake has moved last in seconds
         private const double secondsPerMove = .25; // the number of seconds that should pass before the snake moves again
 
+        // game info
+        private int score;
 
 
         SnakeDirection dirToMove;
@@ -58,8 +63,9 @@ namespace Snake
             _grid.AddFood();
 
             dirToMove = _snake.Direction;
+            score = 0;
 
-            _textBoxes = new List<TextBox>();
+            _textBoxes = new List<TextElement>();
 
             base.Initialize();
         }
@@ -74,11 +80,16 @@ namespace Snake
 
             font1 = Content.Load<SpriteFont>("Arial");
 
-            scoreBox = new TextBox(font1, Vector2.One, new Vector2(800, 100), "Score: ");
-            gameoverBox = new TextBox(font1, Vector2.One, new Vector2(800, 200), "GameOver");
+            scoreBox = new TextElement(font1, Vector2.One, new Vector2(800, 100), "Score: ");
+            gameoverBox = new TextElement(font1, Vector2.One, new Vector2(800, 200), "GameOver");
+            winBox = new TextElement(font1, Vector2.One, new Vector2(800, 300), "You win!");
+
+            gameoverBox.Enabled = false;
+            winBox.Enabled = false;
 
             _textBoxes.Add(scoreBox);
             _textBoxes.Add(gameoverBox);
+            _textBoxes.Add(winBox);
 
             UpdateGrid();
         }
@@ -113,8 +124,8 @@ namespace Snake
             // check if the snake hits itself or if it will be out of bounds by the time it moves next
             if (_snake.IsDead() || _snake.HeadToBeOutOfBounds())
             {
-                // replace this with new 'Game over' code later
-                Exit();
+                _snake.CanMove = false;
+                gameoverBox.Enabled = true;
             }
             
             if (timeSinceLastMove > gameTime.ElapsedGameTime.TotalSeconds + secondsPerMove)
@@ -130,10 +141,18 @@ namespace Snake
 
             // if snake hits food item, add a segment to it
             // will need to add a check to make sure the snake does not extend beyond the grid, in which case the game would be 'won'
-            if (_snake.HeadPosition.Equals(_grid.FruitSpace.Position / 25))
+            if (_snake.HeadPosition.Equals(_grid.FoodSpace.Position / 25))
             {
                 _snake.AddSegment();
                 _grid.AddFood();
+                score++;
+                scoreBox.Text = "Score: " + score;
+            }
+
+            if (_snake.SnakeBody.Count == _grid.Size)
+            {
+                _snake.CanMove = false;
+                winBox.Enabled = true;
             }
 
             UpdateGrid();
@@ -153,9 +172,12 @@ namespace Snake
                 _spriteBatch.Draw(space.Texture, space.Dimensions, Color.White);
             }
 
-            foreach(TextBox box in _textBoxes)
+            foreach(TextElement box in _textBoxes)
             {
-
+                if (box.Enabled)
+                {
+                    _spriteBatch.DrawString(box.Font, box.Text, box.Position, box.TextColor);
+                }
             }
 
             _spriteBatch.End();
@@ -171,7 +193,7 @@ namespace Snake
                 space.Texture = emptySpaceTexture;
             }
 
-            _grid.FruitSpace.Texture = foodTexture;
+            _grid.FoodSpace.Texture = foodTexture;
 
             foreach (Vector2 segment in _snake.SnakeBody)
             {

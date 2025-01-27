@@ -14,12 +14,12 @@ namespace Snake
     internal class Grid : IEnumerable<GridSpace>
     {
         private GridSpace[,] spaces; // All of the spaces within this grid
-        private GridSpace fruitSpace; // the space the fruit is on
+        private GridSpace foodSpace; // the space the fruit is on
         private Random rng; // random number generator for placing fruit
         public int Rows { get { return spaces.GetLength(0); } }
         public int Columns { get { return spaces.GetLength(1); } }
         public int Size { get { return spaces.Length; } }
-        public GridSpace FruitSpace { get { return fruitSpace; } } // the space the fruit is on
+        public GridSpace FoodSpace { get { return foodSpace; } } // the space the fruit is on
         public static Grid Instance { get; private set; }
         public GridSpace this[int i, int k] { get { return spaces[i, k]; } set { spaces[i, k] = value; } } // indexer property
 
@@ -74,7 +74,7 @@ namespace Snake
 
                 if (!invalidPositions.Contains(selectedPosition))
                 {
-                    fruitSpace = spaces[(int)selectedPosition.X, (int)selectedPosition.Y];
+                    foodSpace = spaces[(int)selectedPosition.X, (int)selectedPosition.Y];
                     done = true;
                 }
             }

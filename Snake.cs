@@ -27,6 +27,7 @@ namespace Snake
         public Vector2 HeadPosition { get { return snakeBody[0]; } } // head of the snake, all other segments follow this
         public List<Vector2> SnakeBody { get { return snakeBody; } }
         public SnakeDirection Direction { get { return direction; } }
+        public bool CanMove { get; set; }
         public static Snake Instance { get; private set; }
 
 
@@ -59,6 +60,8 @@ namespace Snake
                 snakeBody.Add(initPosition - (offset * directionVector));
                 offset += Vector2.One;
             }
+
+            CanMove = true;
         }
 
         /// <summary>
@@ -133,12 +136,14 @@ namespace Snake
         /// </summary>
         public void Move()
         {
-            for (int i = snakeBody.Count-1; i >= 1; i--)
+            if (CanMove)
             {
-                snakeBody[i] = snakeBody[i - 1];
+                for (int i = snakeBody.Count - 1; i >= 1; i--)
+                {
+                    snakeBody[i] = snakeBody[i - 1];
+                }
+                snakeBody[0] += directionVector;
             }
-
-            snakeBody[0] += directionVector;
         }
 
         /// <summary>
@@ -164,11 +169,11 @@ namespace Snake
         /// <returns>If the head will be out of bounds</returns>
         public bool HeadToBeOutOfBounds()
         {
-            // head offset in direction to move to check before moving
+            // where the head will be if it were to move
             int headX = (int)(HeadPosition.X + directionVector.X);
             int headY = (int)(HeadPosition.Y + directionVector.Y);
 
-            return !(headX > -1 && headX <= Grid.Instance.Columns && headY > -1 && headY <= Grid.Instance.Rows); // inverse of if the snake is in bounds
+            return !(headX > -1 && headX < Grid.Instance.Columns && headY > -1 && headY < Grid.Instance.Rows); // inverse of if the snake is in bounds
         }
     }
 }
